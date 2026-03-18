@@ -1,0 +1,8 @@
+{
+  "templates": [
+    { "label": "Biroliro", "src": "biroliro.jfif" },
+    { "label": "Blackman", "src": "blackman.jfif" },
+    { "label": "Cat", "src": "cat.jfif" }
+  ]
+}
+

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Meme Maker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <span class="brand-mark">😄</span>
+          <span class="brand-text">Meme Maker</span>
+        </div>
+        <p class="header-subtitle">Pick a template, add text, download your masterpiece.</p>
+      </header>
+
+      <main class="app-main">
+        <section class="controls-card">
+          <h2>1. Choose template</h2>
+          <div class="control-row">
+            <label class="field">
+              <span class="field-label">Built‑in templates</span>
+              <select id="templateSelect" class="select">
+                <option value="">Loading templates…</option>
+              </select>
+            </label>
+            <span class="field or-label">or</span>
+            <label class="field">
+              <span class="field-label">Upload your own</span>
+              <input id="imageUpload" type="file" accept="image/*" />
+            </label>
+          </div>
+
+          <h2>2. Add text</h2>
+          <div class="control-row control-row--stack">
+            <label class="field">
+              <span class="field-label">Top text</span>
+              <input id="topText" type="text" placeholder="TOP TEXT" />
+            </label>
+            <label class="field">
+              <span class="field-label">Bottom text</span>
+              <input id="bottomText" type="text" placeholder="BOTTOM TEXT" />
+            </label>
+          </div>
+
+          <div class="control-row">
+            <label class="field">
+              <span class="field-label">Text color</span>
+              <input id="textColor" type="color" value="#ffffff" />
+            </label>
+            <label class="field stretch">
+              <span class="field-label">Text size</span>
+              <input id="fontSize" type="range" min="16" max="72" value="40" />
+            </label>
+            <span class="field-value" id="fontSizeValue">40 px</span>
+          </div>
+
+          <button id="downloadBtn" class="primary-btn">Download meme</button>
+        </section>
+
+        <section class="canvas-card">
+          <h2>3. Preview &amp; export</h2>
+          <div class="canvas-wrapper">
+            <canvas id="memeCanvas" width="600" height="600"></canvas>
+            <p class="canvas-hint">
+              Tip: Use the slider to resize the text. Text has a thick black border for classic meme style.
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <footer class="app-footer">
+        <span>Built for quick laughs — all in your browser.</span>
+      </footer>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>
+

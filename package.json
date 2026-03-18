@@ -1,0 +1,16 @@
+{
+  "name": "browser-meme-generator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lightweight in-browser meme generator with templates, text controls, and download.",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "meme",
+    "generator",
+    "canvas",
+    "frontend"
+  ]
+}
+
