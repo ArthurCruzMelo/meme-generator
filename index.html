@@ -68,6 +68,43 @@
               Tip: Use the slider to resize the text. Text has a thick black border for classic meme style.
             </p>
           </div>
+
+          <div class="inline-text-editor" id="inlineTextEditor">
+            <div class="inline-editor-toprow">
+              <div class="segmented" role="tablist" aria-label="Select meme text">
+                <button
+                  id="editTopBtn"
+                  type="button"
+                  class="seg-btn is-active"
+                  aria-selected="true"
+                >
+                  Top
+                </button>
+                <button
+                  id="editBottomBtn"
+                  type="button"
+                  class="seg-btn"
+                  aria-selected="false"
+                >
+                  Bottom
+                </button>
+              </div>
+              <span class="inline-editor-hint">Click the meme to switch</span>
+            </div>
+
+            <label class="field inline-field">
+              <span class="field-label" id="inlineTextLabel">Top text</span>
+              <input id="inlineTextInput" type="text" placeholder="TOP TEXT" />
+            </label>
+
+            <div class="control-row inline-size-row">
+              <label class="field stretch">
+                <span class="field-label">Font size</span>
+                <input id="inlineFontSize" type="range" min="16" max="72" value="40" />
+              </label>
+              <span class="field-value" id="inlineFontSizeValue">40 px</span>
+            </div>
+          </div>
         </section>
       </main>
 

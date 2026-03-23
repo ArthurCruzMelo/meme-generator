@@ -10,6 +10,14 @@ const fontSizeValue = document.getElementById("fontSizeValue");
 const textColorInput = document.getElementById("textColor");
 const downloadBtn = document.getElementById("downloadBtn");
 
+// Inline editor (inside "3. Preview & export")
+const inlineTextLabel = document.getElementById("inlineTextLabel");
+const inlineTextInput = document.getElementById("inlineTextInput");
+const inlineFontSizeRange = document.getElementById("inlineFontSize");
+const inlineFontSizeValue = document.getElementById("inlineFontSizeValue");
+const editTopBtn = document.getElementById("editTopBtn");
+const editBottomBtn = document.getElementById("editBottomBtn");
+
 const builtInTemplates = [
   { label: "Drake Hotline Bling", src: "https://i.imgflip.com/30b1gx.jpg" },
   { label: "Distracted Boyfriend", src: "https://i.imgflip.com/1ur9b0.jpg" },
@@ -19,6 +27,48 @@ const builtInTemplates = [
 let currentImage = new Image();
 let currentFontSize = parseInt(fontSizeRange.value, 10) || 40;
 let currentTextColor = textColorInput ? textColorInput.value : "#ffffff";
+
+let activeInlineText = "top";
+
+function updateInlineButtons() {
+  if (!editTopBtn || !editBottomBtn) return;
+  editTopBtn.classList.toggle("is-active", activeInlineText === "top");
+  editTopBtn.setAttribute("aria-selected", activeInlineText === "top" ? "true" : "false");
+  editBottomBtn.classList.toggle("is-active", activeInlineText === "bottom");
+  editBottomBtn.setAttribute(
+    "aria-selected",
+    activeInlineText === "bottom" ? "true" : "false"
+  );
+}
+
+function syncInlineEditorFromActiveText() {
+  if (!inlineTextInput) return;
+
+  const value = activeInlineText === "top" ? topTextInput.value : bottomTextInput.value;
+  inlineTextInput.value = value;
+
+  if (inlineTextLabel) inlineTextLabel.textContent = activeInlineText === "top" ? "Top text" : "Bottom text";
+  inlineTextInput.placeholder = activeInlineText === "top" ? "TOP TEXT" : "BOTTOM TEXT";
+
+  updateInlineButtons();
+}
+
+function setActiveInlineText(kind) {
+  activeInlineText = kind === "bottom" ? "bottom" : "top";
+  syncInlineEditorFromActiveText();
+}
+
+function setFontSize(nextSize) {
+  const size = parseInt(nextSize, 10) || 40;
+  currentFontSize = size;
+  fontSizeRange.value = String(size);
+  fontSizeValue.textContent = `${currentFontSize} px`;
+
+  if (inlineFontSizeRange) inlineFontSizeRange.value = String(size);
+  if (inlineFontSizeValue) inlineFontSizeValue.textContent = `${currentFontSize} px`;
+
+  renderMeme();
+}
 
 function setSelectLoadingState(text) {
   if (!templateSelect) return;
@@ -233,10 +283,16 @@ imageUpload.addEventListener("change", (event) => {
 });
 
 topTextInput.addEventListener("input", () => {
+  if (activeInlineText === "top" && inlineTextInput) {
+    inlineTextInput.value = topTextInput.value;
+  }
   renderMeme();
 });
 
 bottomTextInput.addEventListener("input", () => {
+  if (activeInlineText === "bottom" && inlineTextInput) {
+    inlineTextInput.value = bottomTextInput.value;
+  }
   renderMeme();
 });
 
@@ -248,9 +304,60 @@ if (textColorInput) {
 }
 
 fontSizeRange.addEventListener("input", () => {
-  currentFontSize = parseInt(fontSizeRange.value, 10) || 40;
-  fontSizeValue.textContent = `${currentFontSize} px`;
-  renderMeme();
+  setFontSize(fontSizeRange.value);
+});
+
+if (inlineTextInput) {
+  inlineTextInput.addEventListener("input", () => {
+    const v = inlineTextInput.value;
+    if (activeInlineText === "top") {
+      topTextInput.value = v;
+    } else {
+      bottomTextInput.value = v;
+    }
+    renderMeme();
+  });
+}
+
+if (inlineFontSizeRange) {
+  inlineFontSizeRange.addEventListener("input", () => {
+    setFontSize(inlineFontSizeRange.value);
+  });
+}
+
+if (editTopBtn) {
+  editTopBtn.addEventListener("click", () => setActiveInlineText("top"));
+}
+if (editBottomBtn) {
+  editBottomBtn.addEventListener("click", () => setActiveInlineText("bottom"));
+}
+
+canvas.addEventListener("click", (event) => {
+  if (!activeInlineText) return;
+
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const x = (event.clientX - rect.left) * scaleX;
+  const y = (event.clientY - rect.top) * scaleY;
+
+  // Rough hit zones for the classic meme layout.
+  const topBoundary = currentFontSize * 2.5;
+  const bottomBoundary = canvas.height - currentFontSize * 2.5;
+
+  if (y <= topBoundary) {
+    setActiveInlineText("top");
+  } else if (y >= bottomBoundary) {
+    setActiveInlineText("bottom");
+  } else {
+    // Keep selection if the click is not close to either text.
+    return;
+  }
+
+  if (inlineTextInput) {
+    inlineTextInput.focus();
+    inlineTextInput.select();
+  }
 });
 
 downloadBtn.addEventListener("click", () => {
@@ -263,6 +370,10 @@ downloadBtn.addEventListener("click", () => {
 
 window.addEventListener("load", () => {
   fontSizeValue.textContent = `${currentFontSize} px`;
+
+  if (inlineFontSizeRange) inlineFontSizeRange.value = String(currentFontSize);
+  if (inlineFontSizeValue) inlineFontSizeValue.textContent = `${currentFontSize} px`;
+  syncInlineEditorFromActiveText();
 
   setSelectLoadingState("Loading templates…");
   loadAssetTemplates().then((assetTemplates) => {
